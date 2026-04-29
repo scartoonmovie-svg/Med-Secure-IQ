@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Med-Secure IQ — by Shaurya Verma</title>
+    <meta name="author" content="Shaurya Verma">
+    <meta name="description" content="Med-Secure IQ - Polypharmacy Defense Portal by Shaurya Verma. Ayushman Bharat Diwas Tech Competition 2026.">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo-block">
+            <div class="logo-icon">⚕</div>
+            <div>
+                <h1 class="site-title">Med-Secure IQ</h1>
+                <p class="site-tagline">by Shaurya Verma &nbsp;·&nbsp; Polypharmacy Defense Portal &nbsp;·&nbsp; Code. Secure. Care.</p>
+            </div>
+        </div>
+        <nav class="top-nav">
+            <a href="#profile" class="nav-btn">Patient Profile</a>
+            <a href="#dashboard" class="nav-btn active">Crisis Dashboard</a>
+            <a href="#engine" class="nav-btn">Interaction Engine</a>
+            <a href="#vault" class="nav-btn">Secure Vault</a>
+        </nav>
+    </div>
+</header>
+
+<!-- Hero Banner -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">Ayushman Bharat Diwas Tech Competition 2026 &nbsp;·&nbsp; Shaurya Verma</div>
+        <h2 class="hero-title">India's Silent Killer:<br><span class="highlight">Polypharmacy</span></h2>
+        <p class="hero-desc">
+            Over <strong>50% of elderly Indians</strong> take 5+ medicines simultaneously from different doctors — 
+            with nobody checking if those drugs are fighting each other. 
+            Med-Secure IQ detects dangerous drug combinations <em>in real-time</em>, 
+            entirely in your browser. <strong>Zero data leaves your device.</strong>
+        </p>
+        <div class="hero-stats">
+            <div class="stat-box">
+                <span class="stat-num">500+</span>
+                <span class="stat-label">Drug Interactions Mapped</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">0</span>
+                <span class="stat-label">Data Sent to Server</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">Client-Side Processing</span>
+            </div>
+        </div>
+        <a href="#dashboard" class="cta-btn">Check Your Medicines Now →</a>
+    </div>
+    <div class="hero-visual">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring delay1"></div>
+        <div class="pulse-ring delay2"></div>
+        <div class="hero-icon">⚕</div>
+    </div>
+</section>
+
+<!-- SECTION 0: Patient Profile -->
+<section id="profile" class="section section-dark">
+    <div class="section-header">
+        <span class="section-tag">Section 00</span>
+        <h2 class="section-title">Patient Profile</h2>
+        <p class="section-desc">Enter patient details once. The interaction engine uses age, gender, and existing conditions to give more relevant risk warnings.</p>
+    </div>
+    <div class="profile-grid" id="profile-display">
+        <!-- filled by JS -->
+    </div>
+</section>
+
+<!-- SECTION 1: Crisis Dashboard -->
+<section id="dashboard" class="section">
+    <div class="section-header">
+        <span class="section-tag">Section 01</span>
+        <h2 class="section-title">Crisis Dashboard</h2>
+        <p class="section-desc">Add your current medications. The system calculates your Chemical Load Score and monitors for danger in real-time.</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Medicine Input Panel -->
+        <div class="panel input-panel">
+            <h3 class="panel-title">Add Medicine</h3>
+            <div class="input-group">
+                <input type="text" id="med-input" class="med-input" placeholder="Type medicine name (e.g. Aspirin, Metformin...)" autocomplete="off">
+                <div id="autocomplete-list" class="autocomplete-list"></div>
+            </div>
+            <div class="input-row">
+                <select id="dose-select" class="dose-select">
+                    <option value="low">Low Dose</option>
+                    <option value="standard" selected>Standard Dose</option>
+                    <option value="high">High Dose</option>
+                </select>
+                <button class="add-btn" onclick="addMedicine()">+ Add</button>
+            </div>
+            <div class="quick-add-label">Quick Add Common Medicines:</div>
+            <div class="quick-tags">
+                <span class="qtag" onclick="quickAdd('Aspirin')">Aspirin</span>
+                <span class="qtag" onclick="quickAdd('Metformin')">Metformin</span>
+                <span class="qtag" onclick="quickAdd('Warfarin')">Warfarin</span>
+                <span class="qtag" onclick="quickAdd('Atorvastatin')">Atorvastatin</span>
+                <span class="qtag" onclick="quickAdd('Amlodipine')">Amlodipine</span>
+                <span class="qtag" onclick="quickAdd('Omeprazole')">Omeprazole</span>
+                <span class="qtag" onclick="quickAdd('Lisinopril')">Lisinopril</span>
+                <span class="qtag" onclick="quickAdd('Ibuprofen')">Ibuprofen</span>
+            </div>
+        </div>
+
+        <!-- Chemical Load Gauge -->
+        <div class="panel gauge-panel">
+            <h3 class="panel-title">Chemical Load Score</h3>
+            <div class="gauge-container">
+                <canvas id="gaugeChart" width="220" height="220"></canvas>
+                <div class="gauge-center">
+                    <span id="load-score" class="load-score">0</span>
+                    <span class="load-label">/ 100</span>
+                </div>
+            </div>
+            <div id="load-status" class="load-status safe">SAFE — No medicines added</div>
+            <div class="load-legend">
+                <span class="legend-dot green"></span> 0–30: Safe
+                <span class="legend-dot yellow"></span> 31–60: Caution
+                <span class="legend-dot red"></span> 61+: Danger
+            </div>
+        </div>
+
+        <!-- Active Medicines List -->
+        <div class="panel medicines-panel">
+            <h3 class="panel-title">Active Medicines <span id="med-count" class="count-badge">0</span></h3>
+            <div id="medicines-list" class="medicines-list">
+                <div class="empty-state">No medicines added yet. Add your first medicine above.</div>
+            </div>
+            <div class="panel-actions">
+                <button class="action-btn secondary" onclick="clearAll()">Clear All</button>
+                <button class="action-btn primary" onclick="generateQR()">Export QR Card</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 2: Interaction Engine -->
+<section id="engine" class="section section-dark">
+    <div class="section-header">
+        <span class="section-tag">Section 02</span>
+        <h2 class="section-title">Interaction Engine</h2>
+        <p class="section-desc">Real-time AI analysis of drug combinations. Every pair is checked against a database of 500+ known interactions.</p>
+    </div>
+
+    <div id="no-interactions" class="empty-engine">
+        <div class="empty-icon">🔬</div>
+        <p>Add at least 2 medicines to see interaction analysis</p>
+    </div>
+
+    <div id="interaction-results" class="interaction-results" style="display:none;">
+        <div class="interaction-summary" id="interaction-summary"></div>
+        <div id="interaction-cards" class="interaction-cards"></div>
+    </div>
+
+    <!-- Interaction Reference Table -->
+    <div class="reference-section">
+        <h3 class="ref-title">Known High-Risk Combinations (Research Reference)</h3>
+        <div class="ref-table-wrap">
+            <table class="ref-table">
+                <thead>
+                    <tr>
+                        <th>Drug A</th>
+                        <th>Drug B</th>
+                        <th>Risk Level</th>
+                        <th>Effect</th>
+                    </tr>
+                </thead>
+                <tbody id="ref-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: Secure Vault -->
+<section id="vault" class="section">
+    <div class="section-header">
+        <span class="section-tag">Section 03</span>
+        <h2 class="section-title">Secure Vault</h2>
+        <p class="section-desc">How Med-Secure IQ protects your most sensitive data — your medical history.</p>
+    </div>
+
+    <div class="vault-grid">
+        <div class="vault-card">
+            <div class="vault-icon">🔒</div>
+            <h3>Zero Server Architecture</h3>
+            <p>Every drug interaction check runs entirely in your browser using JavaScript. Your medicine list never touches a server, database, or third-party API.</p>
+            <div class="vault-proof">
+                <span class="proof-label">Proof:</span> Open DevTools → Network tab → Add a medicine → Zero network requests made.
+            </div>
+        </div>
+        <div class="vault-card">
+            <div class="vault-icon">🛡</div>
+            <h3>Client-Side Processing</h3>
+            <p>The entire 500+ drug interaction database is embedded in the JavaScript file. No API calls. No cloud. No tracking. Works fully offline after first load.</p>
+            <div class="vault-proof">
+                <span class="proof-label">Try it:</span> Disconnect your internet. The interaction engine still works perfectly.
+            </div>
+        </div>
+        <div class="vault-card">
+            <div class="vault-icon">⚠</div>
+            <h3>Phishing Awareness</h3>
+            <p>Fake medical apps are a growing threat in India. They steal your health data and sell it. Always verify: Does the app send data to a server? Med-Secure IQ never does.</p>
+            <div class="vault-proof">
+                <span class="proof-label">Red flags:</span> Apps asking for Aadhaar, login, or "cloud sync" for basic medicine checks.
+            </div>
+        </div>
+        <div class="vault-card">
+            <div class="vault-icon">📋</div>
+            <h3>Data Privacy by Design</h3>
+            <p>Med-Secure IQ follows Privacy by Design principles. Data minimization: we only process what you type. No cookies, no analytics, no fingerprinting.</p>
+            <div class="vault-proof">
+                <span class="proof-label">Standard:</span> Aligned with India's Digital Personal Data Protection Act 2023.
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Audit Panel -->
+    <div class="audit-panel">
+        <h3 class="audit-title">Live Security Audit</h3>
+        <p class="audit-desc">Run a real-time security check on this session</p>
+        <button class="audit-btn" onclick="runSecurityAudit()">Run Security Audit</button>
+        <div id="audit-results" class="audit-results" style="display:none;"></div>
+    </div>
+
+    <!-- QR Export Modal -->
+    <div id="qr-modal" class="modal" style="display:none;">
+        <div class="modal-box">
+            <h3>Medicine Passport QR</h3>
+            <p>Share this with any doctor. Contains your current medicine list only — no personal data.</p>
+            <div id="qr-code-container" style="margin: 20px auto; text-align:center;"></div>
+            <p class="qr-note">⚠ This QR contains only medicine names. No name, age, or personal info included.</p>
+            <button class="action-btn secondary" onclick="closeQR()">Close</button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <span class="footer-logo">⚕ Med-Secure IQ</span>
+            <p>Designed and built by <strong style="color:var(--blue)">Shaurya Verma</strong></p>
+            <p style="margin-top:4px;">Ayushman Bharat Diwas Tech Competition 2026</p>
+        </div>
+        <div class="footer-note">
+            <strong>Disclaimer:</strong> This tool is for educational and awareness purposes only. 
+            Always consult a qualified doctor before making any medication decisions.
+        </div>
+        <div class="footer-tag">Code. Secure. Care.</div>
+    </div>
+</footer>
+
+<script src="js/interactions-db.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>

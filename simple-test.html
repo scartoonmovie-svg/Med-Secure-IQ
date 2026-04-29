@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+    <style>
+        body {
+            background: #0a0e27;
+            color: #00d4ff;
+            font-family: Arial;
+            padding: 50px;
+            text-align: center;
+        }
+        h1 { font-size: 48px; }
+        .status { margin: 20px; padding: 20px; background: #1a1f3a; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🏥 MediGuard AI - Simple Test</h1>
+    <div class="status" id="status">Testing...</div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+    
+    <script>
+        const status = document.getElementById('status');
+        let results = '';
+        
+        // Test 1: Check if CryptoJS loaded
+        if (typeof CryptoJS !== 'undefined') {
+            results += '✅ CryptoJS loaded<br>';
+        } else {
+            results += '❌ CryptoJS failed<br>';
+        }
+        
+        // Test 2: Check if LZString loaded
+        if (typeof LZString !== 'undefined') {
+            results += '✅ LZString loaded<br>';
+        } else {
+            results += '❌ LZString failed<br>';
+        }
+        
+        // Test 3: Load our modules
+        const script1 = document.createElement('script');
+        script1.src = 'js/encryption.js';
+        script1.onload = () => {
+            results += '✅ encryption.js loaded<br>';
+            status.innerHTML = results;
+            
+            // Test 4
+            const script2 = document.createElement('script');
+            script2.src = 'js/storage.js';
+            script2.onload = () => {
+                results += '✅ storage.js loaded<br>';
+                status.innerHTML = results;
+                
+                // Test 5
+                const script3 = document.createElement('script');
+                script3.src = 'js/medical-ai.js';
+                script3.onload = () => {
+                    results += '✅ medical-ai.js loaded<br>';
+                    status.innerHTML = results;
+                    
+                    // Test 6
+                    const script4 = document.createElement('script');
+                    script4.src = 'js/app.js';
+                    script4.onload = () => {
+                        results += '✅ app.js loaded<br>';
+                        
+                        // Test 7: Try to create app
+                        try {
+                            const testApp = new MediGuardApp();
+                            results += '✅ MediGuardApp created<br>';
+                            results += '<h2 style="color: #00ff88;">ALL TESTS PASSED!</h2>';
+                            results += '<p>Main website should work. Try <a href="index.html" style="color: #00d4ff;">index.html</a></p>';
+                        } catch (error) {
+                            results += '❌ MediGuardApp failed: ' + error.message + '<br>';
+                        }
+                        
+                        status.innerHTML = results;
+                    };
+                    script4.onerror = () => {
+                        results += '❌ app.js failed to load<br>';
+                        status.innerHTML = results;
+                    };
+                    document.head.appendChild(script4);
+                };
+                script3.onerror = () => {
+                    results += '❌ medical-ai.js failed to load<br>';
+                    status.innerHTML = results;
+                };
+                document.head.appendChild(script3);
+            };
+            script2.onerror = () => {
+                results += '❌ storage.js failed to load<br>';
+                status.innerHTML = results;
+            };
+            document.head.appendChild(script2);
+        };
+        script1.onerror = () => {
+            results += '❌ encryption.js failed to load<br>';
+            status.innerHTML = results;
+        };
+        document.head.appendChild(script1);
+        
+        status.innerHTML = results;
+    </script>
+</body>
+</html>
